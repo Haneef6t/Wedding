@@ -60,8 +60,22 @@ const Section = ({
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [wishesImgAttempt, setWishesImgAttempt] = useState(0);
 
   const weddingDate = useMemo(() => new Date("May 14, 2026 00:00:00").getTime(), []);
+
+  const wishesImageCandidates = useMemo(
+    () => [
+      "/MyImage-1776680179-00.jpg",
+      "/MyImage-1776680179-00.png",
+      "/MyImage-1776680179-00.jpeg",
+      "/MyImage-1776680179-00.webp",
+      "/MyImage-1776680179-00",
+      // Fallback (online) so the section never looks broken
+      "https://images.unsplash.com/photo-1520857014576-2c4f4c972b57?auto=format&fit=crop&w=1200&q=80",
+    ],
+    []
+  );
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -292,9 +306,27 @@ export default function App() {
         </Section>
 
         {/* Blessings Section */}
-        <Section bgImage="https://picsum.photos/seed/wedding5/1920/1080">
+        <Section bgImage="https://images.unsplash.com/photo-1520857014576-2c4f4c972b57?auto=format&fit=crop&w=2400&q=80">
           <div className="max-w-xl mx-auto w-full">
             <h2 className="font-serif text-wedding-gold text-4xl mb-8">Send Your Blessings</h2>
+            <div className="mb-6">
+              <img
+                src={
+                  wishesImageCandidates[
+                    Math.min(wishesImgAttempt, wishesImageCandidates.length - 1)
+                  ]
+                }
+                alt="Wishes"
+                className="w-full max-h-72 object-contain rounded-2xl border border-wedding-gold/30 shadow-2xl bg-black/20 backdrop-blur-sm"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                onError={() =>
+                  setWishesImgAttempt((n) =>
+                    Math.min(n + 1, wishesImageCandidates.length - 1)
+                  )
+                }
+              />
+            </div>
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <input 
                 type="text" 
